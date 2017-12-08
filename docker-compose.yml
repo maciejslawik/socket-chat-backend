@@ -10,6 +10,8 @@ services:
             PHP_IDE_CONFIG: "serverName=${PHP_IDE_CONFIG_SERVERNAME}"
         links:
             - rabbitmq
+            - redis
+            - mongodb
     nginx:
         image: maciejslawik/nginx:latest
         ports:

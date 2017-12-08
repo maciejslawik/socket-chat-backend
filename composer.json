@@ -1,5 +1,13 @@
 {
-    "require": {
-        "videlalvaro/php-amqplib": "^2.7"
+  "require": {
+    "php-amqplib/php-amqplib": "^2.7",
+    "cboden/ratchet": "^0.4.0",
+    "rdlowrey/auryn": "^1.4",
+    "vlucas/phpdotenv": "dev-master"
+  },
+  "autoload": {
+    "psr-0": {
+      "MSlwk": "src/"
     }
+  }
 }
