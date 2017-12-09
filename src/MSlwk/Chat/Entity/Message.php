@@ -4,7 +4,7 @@
  * @author Maciej Sławik <maciekslawik@gmail.com>
  */
 
-namespace MSlwk\Model;
+namespace MSlwk\Chat\Entity;
 
 use JsonSerializable;
 

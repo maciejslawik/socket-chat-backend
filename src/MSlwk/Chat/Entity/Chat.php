@@ -4,8 +4,11 @@
  * @author Maciej Sławik <maciekslawik@gmail.com>
  */
 
-namespace MSlwk\Model;
+namespace MSlwk\Chat\Entity;
 
+use MSlwk\Chat\Api\AMQPPublisherInterface;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
@@ -21,11 +24,18 @@ class Chat implements MessageComponentInterface
     protected $clients;
 
     /**
-     * Chat constructor.
+     * @var AMQPPublisherInterface
      */
-    public function __construct()
+    protected $AMQPPublisher;
+
+    /**
+     * Chat constructor.
+     * @param AMQPPublisherInterface $AMQPPublisher
+     */
+    public function __construct(AMQPPublisherInterface $AMQPPublisher)
     {
         $this->clients = new \SplObjectStorage;
+        $this->AMQPPublisher = $AMQPPublisher;
     }
 
     /**
@@ -34,6 +44,8 @@ class Chat implements MessageComponentInterface
     public function onOpen(ConnectionInterface $conn)
     {
         $this->clients->attach($conn);
+
+//        $conn->send(json_encode($msgs));
     }
 
     /**
@@ -42,9 +54,10 @@ class Chat implements MessageComponentInterface
      */
     public function onMessage(ConnectionInterface $from, $msg)
     {
-        $message = $this->generateMessage($msg);
+        $message = $this->generateMessageObject($msg);
         foreach ($this->clients as $client) {
             $client->send(json_encode([$message]));
+            $this->publishMessage(json_encode($message));
         }
     }
 
@@ -69,12 +82,20 @@ class Chat implements MessageComponentInterface
      * @param string $payload
      * @return Message
      */
-    private function generateMessage(string $payload): Message
+    private function generateMessageObject(string $payload): Message
     {
         $messageData = json_decode($payload);
         $message = new Message();
         $message->setMessage($messageData->message);
         $message->setNickname($messageData->nickname);
         return $message;
+    }
+
+    /**
+     * @param string $message
+     */
+    private function publishMessage(string $message): void
+    {
+        $this->AMQPPublisher->publishMessage($message);
     }
 }
