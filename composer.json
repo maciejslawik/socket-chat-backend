@@ -3,7 +3,8 @@
     "php-amqplib/php-amqplib": "^2.7",
     "cboden/ratchet": "^0.4.0",
     "rdlowrey/auryn": "^1.4",
-    "vlucas/phpdotenv": "dev-master"
+    "vlucas/phpdotenv": "dev-master",
+    "monolog/monolog": "^1.23"
   },
   "autoload": {
     "psr-0": {
