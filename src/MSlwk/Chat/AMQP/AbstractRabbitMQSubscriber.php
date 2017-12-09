@@ -6,6 +6,7 @@
 
 namespace MSlwk\Chat\AMQP;
 
+use MSlwk\Chat\Api\AMQP\AMQPInterface;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -14,16 +15,8 @@ use PhpAmqpLib\Message\AMQPMessage;
  * Class AbstractRabbitMQSubscriber
  * @package MSlwk\Chat\AMQP
  */
-abstract class AbstractRabbitMQSubscriber
+abstract class AbstractRabbitMQSubscriber implements AMQPInterface
 {
-    const HOSTNAME_ENV = 'RABBITMQ_HOST';
-    const PORT_ENV = 'RABBITMQ_MAIN_PORT';
-    const USERNAME_ENV = 'RABBITMQ_USER';
-    const PASSWORD_ENV = 'RABBITMQ_PASS';
-    const QUEUE_ENV = 'RABBITMQ_QUEUE';
-    const EXCHANGE_ENV = 'RABBITMQ_EXCHANGE';
-    const VHOST_ENV = 'RABBITMQ_VHOST';
-
     /**
      * @var AMQPChannel
      */
@@ -79,14 +72,14 @@ abstract class AbstractRabbitMQSubscriber
      */
     private function initSubscriber(): void
     {
-        $this->exchange = getenv(self::EXCHANGE_ENV);
-        $queue = getenv(self::QUEUE_ENV);
+        $this->exchange = getenv(self::RABBITMQ_EXCHANGE_ENV);
+        $queue = getenv(self::RABBITMQ_QUEUE_ENV);
         $connection = new AMQPStreamConnection(
-            getenv(self::HOSTNAME_ENV),
-            getenv(self::PORT_ENV),
-            getenv(self::USERNAME_ENV),
-            getenv(self::PASSWORD_ENV),
-            getenv(self::VHOST_ENV)
+            getenv(self::RABBITMQ_HOSTNAME_ENV),
+            getenv(self::RABBITMQ_PORT_ENV),
+            getenv(self::RABBITMQ_USERNAME_ENV),
+            getenv(self::RABBITMQ_PASSWORD_ENV),
+            getenv(self::RABBITMQ_VHOST_ENV)
         );
         $this->channel = $connection->channel();
         $this->channel->queue_declare(

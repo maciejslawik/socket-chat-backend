@@ -6,9 +6,8 @@
 
 namespace MSlwk\Chat\Entity;
 
-use MSlwk\Chat\Api\AMQPPublisherInterface;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Message\AMQPMessage;
+use MSlwk\Chat\Api\AMQP\AMQPPublisherInterface;
+use MSlwk\Chat\Api\LatestMessages\LatestMessagesReaderInterface;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
@@ -29,13 +28,22 @@ class Chat implements MessageComponentInterface
     protected $AMQPPublisher;
 
     /**
+     * @var LatestMessagesReaderInterface
+     */
+    protected $latestMessagesReader;
+
+    /**
      * Chat constructor.
      * @param AMQPPublisherInterface $AMQPPublisher
+     * @param LatestMessagesReaderInterface $latestMessagesReader
      */
-    public function __construct(AMQPPublisherInterface $AMQPPublisher)
-    {
+    public function __construct(
+        AMQPPublisherInterface $AMQPPublisher,
+        LatestMessagesReaderInterface $latestMessagesReader
+    ) {
         $this->clients = new \SplObjectStorage;
         $this->AMQPPublisher = $AMQPPublisher;
+        $this->latestMessagesReader = $latestMessagesReader;
     }
 
     /**
@@ -44,8 +52,7 @@ class Chat implements MessageComponentInterface
     public function onOpen(ConnectionInterface $conn)
     {
         $this->clients->attach($conn);
-
-//        $conn->send(json_encode($msgs));
+        $conn->send(json_encode($this->latestMessagesReader->getLatestMessages()));
     }
 
     /**
@@ -86,8 +93,8 @@ class Chat implements MessageComponentInterface
     {
         $messageData = json_decode($payload);
         $message = new Message();
-        $message->setMessage($messageData->message);
-        $message->setNickname($messageData->nickname);
+        $message->setMessage(htmlentities($messageData->message));
+        $message->setNickname(htmlentities($messageData->nickname));
         return $message;
     }
 

@@ -4,13 +4,13 @@
  * @author Maciej Sławik <maciekslawik@gmail.com>
  */
 
-namespace MSlwk\Chat\Api;
+namespace MSlwk\Chat\Api\AMQP;
 
 /**
  * Interface AMQPPublisherInterface
  * @package MSlwk\Chat\Api
  */
-interface AMQPPublisherInterface
+interface AMQPPublisherInterface extends AMQPInterface
 {
     /**
      * @param string $message
