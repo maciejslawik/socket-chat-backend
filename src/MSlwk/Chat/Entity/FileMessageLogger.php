@@ -18,6 +18,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 final class FileMessageLogger extends AbstractRabbitMQSubscriber
 {
     const CONSUMER_TAG = 'file_logger';
+    const QUEUE_NAME = 'file_logger';
     const LOGGER_NAME = 'message_logger';
     const LOG_FILE = __DIR__ . '/../../../../var/log/messages.log';
 
@@ -51,5 +52,13 @@ final class FileMessageLogger extends AbstractRabbitMQSubscriber
     protected function getConsumerTag(): string
     {
         return self::CONSUMER_TAG;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getQueueName(): string
+    {
+        return self::QUEUE_NAME;
     }
 }

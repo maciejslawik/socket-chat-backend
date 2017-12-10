@@ -33,7 +33,6 @@ final class RabbitMQMessagePublisher implements AMQPPublisherInterface
     public function __construct()
     {
         $this->exchange = getenv(self::RABBITMQ_EXCHANGE_ENV);
-        $queue = getenv(self::RABBITMQ_QUEUE_ENV);
         $connection = new AMQPStreamConnection(
             getenv(self::RABBITMQ_HOSTNAME_ENV),
             getenv(self::RABBITMQ_PORT_ENV),
@@ -42,14 +41,12 @@ final class RabbitMQMessagePublisher implements AMQPPublisherInterface
             getenv(self::RABBITMQ_VHOST_ENV)
         );
         $this->channel = $connection->channel();
-        $this->channel = $connection->channel();
-        $this->channel->queue_declare($queue, false, true, false, false);
         $this->channel->exchange_declare($this->exchange, 'direct', false, true, false);
-        $this->channel->queue_bind($queue, $this->exchange);
     }
 
     /**
      * @param string $message
+     * @return void
      */
     public function publishMessage(string $message): void
     {

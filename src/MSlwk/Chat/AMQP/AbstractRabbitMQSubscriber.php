@@ -20,12 +20,12 @@ abstract class AbstractRabbitMQSubscriber implements AMQPInterface
     /**
      * @var AMQPChannel
      */
-    private $channel;
+    protected $channel;
 
     /**
      * @var string
      */
-    private $exchange;
+    protected $exchange;
 
     /**
      * AbstractRabbitMQSubscriber constructor.
@@ -68,12 +68,17 @@ abstract class AbstractRabbitMQSubscriber implements AMQPInterface
     abstract protected function getConsumerTag(): string;
 
     /**
+     * @return string
+     */
+    abstract protected function getQueueName(): string;
+
+    /**
      * @return void
      */
     private function initSubscriber(): void
     {
         $this->exchange = getenv(self::RABBITMQ_EXCHANGE_ENV);
-        $queue = getenv(self::RABBITMQ_QUEUE_ENV);
+        $queue = $this->getQueueName();
         $connection = new AMQPStreamConnection(
             getenv(self::RABBITMQ_HOSTNAME_ENV),
             getenv(self::RABBITMQ_PORT_ENV),
@@ -87,13 +92,6 @@ abstract class AbstractRabbitMQSubscriber implements AMQPInterface
             false,
             true,
             false,
-            false
-        );
-        $this->channel->exchange_declare(
-            $this->exchange,
-            'direct',
-            false,
-            true,
             false
         );
         $this->channel->queue_bind($queue, $this->exchange);

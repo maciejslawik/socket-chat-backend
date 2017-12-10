@@ -63,8 +63,8 @@ class Chat implements MessageComponentInterface
     {
         $message = $this->generateMessageObject($msg);
         foreach ($this->clients as $client) {
-            $client->send(json_encode([$message]));
             $this->publishMessage(json_encode($message));
+            $client->send(json_encode([$message]));
         }
     }
 

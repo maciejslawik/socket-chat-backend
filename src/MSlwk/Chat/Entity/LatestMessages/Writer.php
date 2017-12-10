@@ -17,6 +17,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 class Writer extends AbstractRabbitMQSubscriber implements LatestMessagesInterface
 {
     const CONSUMER_TAG = 'redis_latest_storage';
+    const QUEUE_NAME = 'redis_latest_storage';
 
     /**
      * @var \Redis
@@ -54,5 +55,13 @@ class Writer extends AbstractRabbitMQSubscriber implements LatestMessagesInterfa
     protected function getConsumerTag(): string
     {
         return self::CONSUMER_TAG;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getQueueName(): string
+    {
+        return self::QUEUE_NAME;
     }
 }

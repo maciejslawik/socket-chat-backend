@@ -36,7 +36,7 @@ services:
         environment:
             - MONGODB_ROOT_PASSWORD=${MONGODB_PASSWORD}
         volumes:
-            - mongodb_data:/bitnami
+            - ./docker/data/mongodb:/bitnami
     rabbitmq:
         image: rabbitmq:3-management
         ports:
@@ -47,6 +47,5 @@ services:
             RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
             RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
 volumes:
-    mongodb_data:
     redis_data:
 
